@@ -31,6 +31,21 @@
         </div>
       </div>
     </div>
+
+    <div class="create">
+      <div class="create__block">
+        <div class="create__content">
+          <h3 class="create__title">Создать новую задачу</h3>
+          <div class="create__close"></div>
+        </div>
+        <div class="create__items">
+          <p class="create__text">Описание</p>
+          <input type="text" class="create__task"/>
+        </div>
+        <button class="create__btn">Создать</button>
+      </div>
+    </div>
+
   </div>
 
 </template>
@@ -42,6 +57,45 @@ export default {
 </script>
 
 <style scoped>
+  .create{
+    max-width: 400px;
+    padding: 40px 40px 50px 40px;
+    background: #FFFFFF;
+    border: 1px solid #DDE2E4;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    border-radius: 6px;
+  }
+  .create__content{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
+  }
+  .create__title{
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 132%;
+    color: #16191D;
+  }
+  .create__close{
+    background: #314B99;
+    border-radius: 5px;
+  }
+  .create__text{
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 14px;
+    color: #16191D;
+    margin-bottom: 5px;
+  }
+  .create__task{
+    background: #FFFFFF;
+    border: 1px solid #DDE2E4;
+    border-radius: 8px;
+    width: 100%;
+    padding: 16px 11px;
+    color: #000000;
+    opacity: 0.5;
+  }
   .container{
     max-width: 1330px;
     padding: 0 15px;
