@@ -1,8 +1,8 @@
 <template>
-  <div class="container">
+  <div class="container _active">
     <div class="header">
       <h1 class="header__title">To do list</h1>
-      <div class="header__add-task"><span class="header__icon"></span></div>
+      <div @click="showModal = true" class="header__add-task"><span class="header__icon"></span></div>
     </div>
     <div class="search">
       <div class="search__content">
@@ -19,14 +19,14 @@
       </div>
       </div>
     <div class="tasks">
-      <div class="task">
-        <div class="content">
+      <div class="task" v-for="task in tasks">
+        <div class="content" >
           <input type="checkbox" name="checkbox" id="checkbox">
-          <p class="problem">TASK 01</p>
+          <p class="problem">{{ task.title }}</p>
         </div>
         <div class="block-status">
-          <p class="status">Выполнено</p>
-          <p class="date">26.08.2022</p>
+          <p class="status">{{task.body}}</p>
+          <p class="date">{{ date }}</p>
         </div>
       </div>
     </div>
@@ -37,11 +37,24 @@
           <h3 class="create__title">Создать новую задачу</h3>
           <div class="create__close"><span class="create__close-icon"></span></div>
         </div>
-        <div class="create__items">
+        <form
+            class="create__items"
+            @submit.prevent
+        >
           <p class="create__text">Описание</p>
-          <input type="text" class="create__task"/>
-        </div>
-        <button class="create__btn">Создать</button>
+          <input
+              type="text"
+              class="create__task"
+              v-bind:value="title"
+              @input="inputTitle"
+          />
+          <button
+              class="create__btn"
+              @click="addTask"
+          >
+            Создать
+          </button>
+        </form>
       </div>
     </div>
 
@@ -50,13 +63,49 @@
 </template>
 
 <script>
+
 export default {
 
+  data(){
+    return{
+      tasks:[
+        {id:1, title: 'My first task', body: 'Выполнено', date: '27.08.2022'}
+      ],
+      title: '',
+      body: '',
+      date: '',
+    }
+  },
+  methods:{
+    addTask(){
+      const newTask = {
+        id: Date.now(),
+        title: this.title,
+        body: this.status,
+        date: this.date
+      }
+      this.tasks.push(newTask);
+      this.title = '';
+      this.body = 'working';
+      this.date = String(new Date()
+          .getDate()).padStart(2, '0') + '.' + String(new Date()
+          .getMonth() + 1).padStart(2, '0') + '.' + new Date().getFullYear();
+    },
+    inputTitle(event){
+      this.title = event.target.value;
+    },
+    closeTaskWindow(){
+
+    },
+
+    // taskCreateOnWindow(){
+    //   showModal: false;
+    // }
+  }
 }
 </script>
 
 <style scoped>
-
   .container{
     max-width: 1330px;
     padding: 0 15px;
@@ -69,7 +118,16 @@ export default {
     border: 0;
     box-sizing: border-box;
   }
-
+  ._active{
+    /*background: rgba(255, 255, 255, 0.01);*/
+    /*backdrop-filter: blur(4px);*/
+  }
+  ._close-window{
+    /*display: none;*/
+  }
+  ._open-window{
+    display: block;
+  }
   .header{
     display: flex;
     justify-content: space-between;
@@ -88,7 +146,6 @@ export default {
     background: #D6DBEB;
     position: relative;
     cursor: pointer;
-
   }
   .header__icon{
     background: #314B99;
@@ -135,7 +192,6 @@ export default {
     display: flex;
     justify-content: space-between;
     padding: 10px 40px 10px 50px;
-
   }
   .subtext-status,
   .subtext-date,
@@ -147,14 +203,8 @@ export default {
     border-left: 1px solid #C4C4C4;
     padding: 0 0 0 20px;
     width: 150px;
+  }
 
-  }
-  .subtext{
-    /*padding: 0 0 0 20px;*/
-  }
-  .subtext-status{
-    /*margin-right: 30px;*/
-  }
   .sort{
     display: flex;
   }
@@ -163,9 +213,7 @@ export default {
     height: 20px;
     border: 1px solid #16191D;
   }
-  .tasks{
 
-  }
   .task{
     display: flex;
     justify-content: space-between;
@@ -205,18 +253,36 @@ export default {
     width: 150px;
   }
   .create{
-    margin: auto;
-    max-width: 400px;
+    width: 100%;
+    min-height: 100%;
+    background: rgba(255, 255, 255, 0.01);
+    backdrop-filter: blur(4px);
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transform: translate(-50%);
+    left: 50%;
+    top: 0;
+    z-index: 2;
+
+  /*   _close-window" v-if="showModal" @close="showModal = true*/
+  /*  document.querySelector('.registration__back').addEventListener('click', () => document.querySelector('.registration').classList.toggle('reg-on-off'))*/
+  }
+  .create__block{
+    margin: 0 auto;
     padding: 40px 40px 50px 40px;
     background: #FFFFFF;
     border: 1px solid #DDE2E4;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
     border-radius: 6px;
+    position: fixed;
   }
   .create__content{
     display: flex;
     justify-content: space-between;
     margin-bottom: 30px;
+    width: 400px;
   }
   .create__title{
     font-weight: 700;
@@ -251,9 +317,7 @@ export default {
     top: 0;
     left: 0;
   }
-  .create__items{
-    margin-bottom: 30px;
-  }
+
   .create__text{
     font-weight: 400;
     font-size: 14px;
@@ -269,6 +333,7 @@ export default {
     padding: 16px 11px;
     color: #000000;
     opacity: 0.5;
+    margin-bottom: 30px;
   }
   .create__btn{
     display: flex;
