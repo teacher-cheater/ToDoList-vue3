@@ -38,8 +38,8 @@
 <!--    <add-tasks-window v-for="task in tasks" :task="task">-->
 
 <!--    </add-tasks-window>-->
-    <add-tasks-window v-model:show="dialogVisible" >
-    <div class="create add-tasks-window " v-if:show="false" >
+    <div class="add-tasks-window"  v-if:show="dialogVisible">
+    <div class="create add-tasks-window "  >
       <div  class="create__block">
         <div class="create__content">
           <h3 class="create__title">Создать новую задачу</h3>
@@ -71,7 +71,7 @@
         </form>
       </div>
     </div>
-    </add-tasks-window>
+    </div>
   </div>
 
 </template>
