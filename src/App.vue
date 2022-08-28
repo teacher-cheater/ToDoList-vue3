@@ -2,7 +2,12 @@
   <div class="container _active">
     <div class="header">
       <h1 class="header__title">To do list</h1>
-      <div @click="showModal = true" class="header__add-task"><span class="header__icon"></span></div>
+      <button
+          class="header__add-task"
+          @click="showDialog"
+      >
+        <span class="header__icon"></span>
+      </button>
     </div>
     <div class="search">
       <div class="search__content">
@@ -30,12 +35,21 @@
         </div>
       </div>
     </div>
+<!--    <add-tasks-window v-for="task in tasks" :task="task">-->
 
-    <div class="create">
-      <div class="create__block">
+<!--    </add-tasks-window>-->
+    <add-tasks-window v-model:show="dialogVisible" >
+    <div class="create add-tasks-window " v-if:show="false" >
+      <div  class="create__block">
         <div class="create__content">
           <h3 class="create__title">Создать новую задачу</h3>
-          <div class="create__close"><span class="create__close-icon"></span></div>
+          <button
+
+              @click="closeModalWindow"
+              class="create__close"
+          >
+            <span class="create__close-icon"></span>
+          </button>
         </div>
         <form
             class="create__items"
@@ -57,15 +71,15 @@
         </form>
       </div>
     </div>
-
+    </add-tasks-window>
   </div>
 
 </template>
 
 <script>
-
+// import AddTasksWindow from "@/components/UI/AddTasksWindow";
 export default {
-
+  // components: {AddTasksWindow},
   data(){
     return{
       tasks:[
@@ -74,6 +88,7 @@ export default {
       title: '',
       body: '',
       date: '',
+      dialogVisible: false,
     }
   },
   methods:{
@@ -94,14 +109,26 @@ export default {
     inputTitle(event){
       this.title = event.target.value;
     },
-    closeTaskWindow(){
-
+    closeModalWindow(){
+      this.$emit('update:show', false)
+      this.dialogVisible = false;
     },
+    showDialog(){
+      this.dialogVisible = true;
+    },
+    name: 'add-tasks-window',
+      show: {
+        type: Boolean,
+        default: false,
+      },
 
+    // hideDialog(){
+    //   this.$emit('update:show', false)
+  }
     // taskCreateOnWindow(){
     //   showModal: false;
     // }
-  }
+
 }
 </script>
 
@@ -252,31 +279,46 @@ export default {
     padding: 0 0 0 20px;
     width: 150px;
   }
-  .create{
-    width: 100%;
-    min-height: 100%;
+  .tasks-window{
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     background: rgba(255, 255, 255, 0.01);
     backdrop-filter: blur(4px);
-    position: absolute;
+    position: fixed;
     display: flex;
-    justify-content: center;
-    align-items: center;
-    transform: translate(-50%);
-    left: 50%;
-    top: 0;
-    z-index: 2;
-
-  /*   _close-window" v-if="showModal" @close="showModal = true*/
-  /*  document.querySelector('.registration__back').addEventListener('click', () => document.querySelector('.registration').classList.toggle('reg-on-off'))*/
   }
-  .create__block{
-    margin: 0 auto;
+  .tasks-window__content{
+    margin: auto;
     padding: 40px 40px 50px 40px;
     background: #FFFFFF;
     border: 1px solid #DDE2E4;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
     border-radius: 6px;
+    min-width: 400px;
+  }
+  .create{
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.01);
+    backdrop-filter: blur(4px);
     position: fixed;
+    display: flex;
+
+    /*   _close-window" v-if="showModal" @close="showModal = true*/
+    /*  document.querySelector('.registration__back').addEventListener('click', () => document.querySelector('.registration').classList.toggle('reg-on-off'))*/
+  }
+  .create__block{
+    margin: auto;
+    padding: 40px 40px 50px 40px;
+    background: #FFFFFF;
+    border: 1px solid #DDE2E4;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    border-radius: 6px;
+    min-width: 400px;
   }
   .create__content{
     display: flex;
