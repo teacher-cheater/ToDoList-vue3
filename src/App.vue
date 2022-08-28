@@ -1,5 +1,5 @@
 <template>
-  <div class="container _active">
+  <div class="container">
     <div class="header">
       <h1 class="header__title">To do list</h1>
       <button
@@ -12,9 +12,24 @@
     <div class="search">
       <div class="search__content">
         <img src="./icons/search.svg" alt="search">
-        <input class="search__text" type="text" placeholder="Поиск Имени, статуса или даты"/>
+        <input
+            class="search__text"
+            type="text"
+            placeholder="Поиск Имени, статуса или даты"
+            v-model="searchQuery"
+        />
       </div>
-      <p class="search__sort">Сортировать по: <span>date</span></p>
+      <p class="search__sort">Сортировать по:
+        <select :options="sortOptions" @change="changeOption">
+          <option value=""></option>
+          <option
+              v-for="option in options"
+             :key="option.value"
+             value="option.value"
+          >
+          </option>
+        </select>
+      </p>
     </div>
     <div class="text">
       <p class="subtext">Описание</p>
@@ -89,8 +104,22 @@ export default {
       body: '',
       date: '',
       dialogVisible: false,
+      searchQuery: '',
+      selectedSort:'',
+      sortOptions:[
+        {value: 'date', name: 'дате'},
+        {value: 'body', name: 'статусу'}
+      ],
+      modelValue:{
+        type: String
+      },
+      options: {
+        type: Array,
+        default: ()=> [],
+      }
     }
   },
+
   methods:{
     addTask(){
       const newTask = {
@@ -105,6 +134,10 @@ export default {
       this.date = String(new Date()
           .getDate()).padStart(2, '0') + '.' + String(new Date()
           .getMonth() + 1).padStart(2, '0') + '.' + new Date().getFullYear();
+    },
+    changeOption(event){
+      console.log(event)
+      this.$emit('update:modelValue', event.target.value)
     },
     inputTitle(event){
       this.title = event.target.value;
@@ -121,14 +154,7 @@ export default {
         type: Boolean,
         default: false,
       },
-
-    // hideDialog(){
-    //   this.$emit('update:show', false)
   }
-    // taskCreateOnWindow(){
-    //   showModal: false;
-    // }
-
 }
 </script>
 
