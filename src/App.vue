@@ -26,7 +26,7 @@
               v-for="option in options"
              :key="option.value"
              value="option.value"
-          >
+          >{{sortOptions.name}}
           </option>
         </select>
       </p>
@@ -39,14 +39,16 @@
       </div>
       </div>
     <div class="tasks">
-      <div class="task" v-for="task in tasks">
-        <div class="content" >
-          <input type="checkbox" name="checkbox" id="checkbox">
+      <div class="task" v-for="task in tasks" :tasks="sortedAndSearchedPosts">
+        <div class="content"
+        >
+          <input type="checkbox" name="checkbox" id="checkbox" v-model="checked">
+
           <p class="problem">{{ task.title }}</p>
         </div>
         <div class="block-status">
           <p class="status">{{task.body}}</p>
-          <p class="date">{{ date }}</p>
+          <p class="date">{{ task.date }}</p>
         </div>
       </div>
     </div>
@@ -59,7 +61,6 @@
         <div class="create__content">
           <h3 class="create__title">Создать новую задачу</h3>
           <button
-
               @click="closeModalWindow"
               class="create__close"
           >
@@ -98,7 +99,7 @@ export default {
   data(){
     return{
       tasks:[
-        {id:1, title: 'My first task', body: 'Выполнено', date: '27.08.2022'}
+        // {id:1, title: 'My first task', body: 'Выполнено', date: '27.08.2022'}
       ],
       title: '',
       body: '',
@@ -136,7 +137,6 @@ export default {
           .getMonth() + 1).padStart(2, '0') + '.' + new Date().getFullYear();
     },
     changeOption(event){
-      console.log(event)
       this.$emit('update:modelValue', event.target.value)
     },
     inputTitle(event){
@@ -154,6 +154,14 @@ export default {
         type: Boolean,
         default: false,
       },
+    computed:{
+      sortedTasks(){
+        return[...this.tasks].sort((task1, task2)=> task1[this.selectedSort]?.localeCompare(task2[this.selectedSort]))
+      },
+      sortedAndSearchedPosts(){
+        return this.sortedTasks.filter(post => post.title.toLowerCase().includes(this.searchQuery.toLowerCase()))
+      }
+    },
   }
 }
 </script>
