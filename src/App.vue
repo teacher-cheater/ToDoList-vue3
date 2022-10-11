@@ -2,6 +2,7 @@
   <div class="container">
     <div class="header">
       <h1 class="header__title">To do list</h1>
+      <!-- ---- создание задачи ---- -->
       <button
           class="header__add-task"
           @click="showDialog"
@@ -9,23 +10,25 @@
         <span class="header__icon"></span>
       </button>
     </div>
+    <!-- ---- поиск задач ---- -->
     <div class="search">
       <div class="search__content">
-        <img src="./icons/search.svg" alt="search">
-        <input
+        <img src="./icons/search.svg" alt="search"/>
+        <search-for-tasks
             class="search__text"
             type="text"
             placeholder="Поиск Имени, статуса или даты"
             v-model="searchQuery"
         />
       </div>
+      <!-- ----- сортировка дата/статус ---- -->
       <p class="search__sort">Сортировать по:
         <select :options="sortOptions" @change="changeOption">
           <option value=""></option>
           <option
               v-for="option in options"
-             :key="option.value"
-             value="option.value"
+              :key="option.value"
+              value="option.value"
           >{{sortOptions.name}}
           </option>
         </select>
@@ -39,12 +42,20 @@
       </div>
       </div>
     <div class="tasks">
-      <div class="task" v-for="task in tasks" :tasks="sortedAndSearchedPosts">
-        <div class="content"
-        >
-          <input type="checkbox" name="checkbox" id="checkbox" v-model="checked">
-
+      <div class="task" v-for="task in tasks" :tasks="filterTasks">
+        <div class="content">
+        <!-- ---- checkbox ---- -->
+        <label>
+          <input 
+            type="checkbox" 
+            name="checkbox" 
+            class="checkbox" 
+            v-model="checked"
+          >
+          <span class="custom-checkbox"></span>
           <p class="problem">{{ task.title }}</p>
+        </label>
+        <!--  -->
         </div>
         <div class="block-status">
           <p class="status">{{task.body}}</p>
@@ -55,7 +66,7 @@
 <!--    <add-tasks-window v-for="task in tasks" :task="task">-->
 
 <!--    </add-tasks-window>-->
-    <div class="add-tasks-window"  v-if:show="dialogVisible">
+    <div class="add-tasks-window" v-if:show="dialogVisible">
     <div class="create add-tasks-window "  >
       <div  class="create__block">
         <div class="create__content">
@@ -75,8 +86,7 @@
           <input
               type="text"
               class="create__task"
-              v-bind:value="title"
-              @input="inputTitle"
+              v-model="title"
           />
           <button
               class="create__btn"
@@ -94,12 +104,14 @@
 
 <script>
 // import AddTasksWindow from "@/components/UI/AddTasksWindow";
+import SearchForTasks from "@/components/UI/SearchForTasks";
 export default {
+  components: {SearchForTasks},
   // components: {AddTasksWindow},
   data(){
     return{
       tasks:[
-        // {id:1, title: 'My first task', body: 'Выполнено', date: '27.08.2022'}
+        //{id:1, title: 'My first task', body: 'Выполнено', date: '27.08.2022'}
       ],
       title: '',
       body: '',
@@ -158,13 +170,14 @@ export default {
       sortedTasks(){
         return[...this.tasks].sort((task1, task2)=> task1[this.selectedSort]?.localeCompare(task2[this.selectedSort]))
       },
-      sortedAndSearchedPosts(){
+      filterTasks(){
         return this.sortedTasks.filter(post => post.title.toLowerCase().includes(this.searchQuery.toLowerCase()))
-      }
+      },
     },
+    
   }
 }
-</script>
+</script>,
 
 <style scoped>
   .container{
@@ -228,7 +241,7 @@ export default {
     transform: rotate(90deg);
   }
   .search{
-    padding: 10px 40px;
+    padding: 10px 40px 10px 20px;
     display: flex;
     justify-content: space-between;
   }
@@ -237,12 +250,12 @@ export default {
     gap: 16px;
   }
   input:active, :hover, :focus {
-       outline: 0;
-       outline-offset: 0;
+      outline: 0;
+      outline-offset: 0;
   }
   .search__text{
     width: 100%;
-    max-width: 300px;
+    min-width: 300px;
     font-weight: 400;
     font-size: 14px;
     line-height: 132%;
@@ -252,7 +265,7 @@ export default {
   .text{
     display: flex;
     justify-content: space-between;
-    padding: 10px 40px 10px 50px;
+    padding: 10px 40px 10px 60px;
   }
   .subtext-status,
   .subtext-date,
@@ -269,16 +282,11 @@ export default {
   .sort{
     display: flex;
   }
-  #checkbox{
-    width: 20px;
-    height: 20px;
-    border: 1px solid #16191D;
-  }
 
   .task{
     display: flex;
     justify-content: space-between;
-    padding: 20px 40px;
+    padding: 20px 40px 20px 20px;
     border-bottom: 1px solid #C4C4C4;
     border-top: 1px solid #C4C4C4;
   }
@@ -290,12 +298,51 @@ export default {
     display: flex;
     justify-content: space-between;
   }
+  /* checkbox */
+  label{
+    display: flex;
+  }
+  .checkbox{
+    width: 0;
+    height: 0;
+    opacity: 0;
+    position: absolute;
+    z-index: -1;
+  }
+  .custom-checkbox{
+    position: relative;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    vertical-align: sub;
+    cursor:pointer;
+    background: url('./icons/circle.svg') 0 0 / contain no-repeat;
+  }
+  .custom-checkbox::before{
+    content: '';
+    display: inline-block;
+    width: 28px;
+    height: 28px;
+    background: url('./icons/checked.svg') 0 0 / contain no-repeat;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    transition: .1s ease 0s;
+    margin-top: 3.8px;
+  }
+  .checkbox:checked + .custom-checkbox::before{
+    transform: translate(-50%, -50%) scale(1);
+  }
+  /* ---------- */
   .problem{
     font-weight: 400;
     font-size: 14px;
     line-height: 132%;
     color: #16191D;
     padding: 0 20px;
+    cursor: pointer;
+    margin-left: 20px;
   }
   .status{
     font-weight: 400;
@@ -304,6 +351,14 @@ export default {
     padding: 0 0 0 20px;
     width: 150px;
     color: #134EC1;
+  }
+  .status-check{
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 132%;
+    padding: 0 0 0 20px;
+    width: 150px;
+    color: #F89B11;
   }
   .date{
     font-weight: 400;
