@@ -19,34 +19,8 @@
         />
       </div>
       <!-- ----- сортировка дата/статус ---- -->
-      <!--<p class="search__sort">Сортировать по:
-        <select :options="sortOptions" @change="changeOption">
-          <option value="">
-          </option>
-          <option
-              v-for="option in options"
-              :key="option.value"
-              value="option.value"
-          >
-          {{sortOptions.name}}
-          </option>
-        </select>
-      </p>-->
       <p class="search__sort">Сортировать по:</p>
-      <!-- TODO component -->
       <my-select v-model="selectedSort" :options="sortOptions" />
-
-      <!--<select v-model="modelValue" @change="changeOption" options="sortOptions">
-        <option disabled value="">Выберите из списка</option>
-        <option
-              v-for="option in options"
-              :key="option.value"
-              :value="option.value"
-          >
-          {{option.name}}
-        </option>
-      </select>-->
-      <!-- TODO -->
     </div>
     <div class="text">
       <p class="subtext">Описание</p>
@@ -55,9 +29,8 @@
         <p class="subtext-date">Дата</p>
       </div>
     </div>
-    <!--<div class="tasks" v-for="task in tasks" :tasks="filterTasks">-->
     <div class="tasks">
-      <!--<div class="task" >-->
+      <!-- --------- вывод задач ------------ -->
       <div class="task" v-for="task in sortedTasks">
         <div class="content">
           <!-- ---- checkbox ---- -->
@@ -75,12 +48,11 @@
         </div>
         <div class="block-status">
           <p class="status">{{ task.body }}</p>
-          <!--<input type="checkbox" class="checkbox">-->
-          <!--<span class="custom-status">В работе</span>-->
           <p class="date">{{ task.date }}</p>
         </div>
       </div>
     </div>
+    <!-- --------------- модальное окно ------------------- -->
     <div class="add-tasks-window" v-if:show="dialogVisible">
       <div class="create add-tasks-window">
         <div class="create__block">
@@ -90,6 +62,7 @@
               <span class="create__close-icon"></span>
             </button>
           </div>
+          <!-- ------------- форма заполнения модалки -------------- -->
           <form class="create__items" @submit.prevent>
             <p class="create__text">Описание</p>
             <input type="text" class="create__task" v-model="title" />
@@ -111,6 +84,7 @@ export default {
   // components: {AddTasksWindow},
   data() {
     return {
+      tasks: JSON.parse(localStorage.getItem("tasks")) ?? [],
       task: {
         title: "",
         body: "",
@@ -155,6 +129,14 @@ export default {
     },
     showDialog() {
       this.dialogVisible = true;
+    },
+  },
+  watch: {
+    tasks: {
+      deep: true,
+      handler(allTasks) {
+        localStorage.setItem("tasks", JSON.stringify(allTasks));
+      },
     },
   },
 };
